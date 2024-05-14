@@ -25,7 +25,7 @@ namespace TravelApp.EntityFrameworkCore
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
            
-                optionsBuilder.UseSqlServer("Server=BNC-SERVER; Database=Speak;user id=sa; password=Bnc@1612;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=BNC-SERVER; Database=TravelApp;user id=sa; password=Bnc@1612;TrustServerCertificate=True");
            
         }
     }
