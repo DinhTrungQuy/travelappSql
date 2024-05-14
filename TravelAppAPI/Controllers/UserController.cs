@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
 using TravelAppAPI.Models.Config;
 using TravelAppAPI.Models.Dto;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {
@@ -40,9 +40,9 @@ namespace TravelAppAPI.Controllers
                 return NotFound();
             }
             var userModel = map.Map<User>(userIn);
-            userModel.Id = id;
+            userModel.UserId = id;
 
-            var filePath = await _fileServices.SaveUserFile(userIn.Image!, userModel.Id);
+            var filePath = await _fileServices.SaveUserFile(userIn.Image!, userModel.UserId);
             if (filePath == "Invalid file")
             {
                 return BadRequest("Invalid file");
@@ -50,7 +50,7 @@ namespace TravelAppAPI.Controllers
             }
             else
             {
-                userModel.ImageUrl = "https://quydt.speak.vn/images/users/" + userModel.Id + Path.GetExtension(filePath);
+                userModel.ImageUrl = "https://quydt.speak.vn/images/users/" + userModel.UserId + Path.GetExtension(filePath);
             }
             var password = await _userServices.GetUserPassword(userModel.Username);
             userModel.Password = password;

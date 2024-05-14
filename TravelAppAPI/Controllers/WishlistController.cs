@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {
@@ -37,7 +37,7 @@ namespace TravelAppAPI.Controllers
         {
             var request = HttpContext.Request;
             string userId = _userServices.DecodeJwtToken(request);
-            wishlist.UserId = userId;
+            wishlist.User.UserId = userId;
             await _wishlistServices.CreateAsync(wishlist);
             return CreatedAtRoute("GetWishlist", new { id = wishlist.Id.ToString() }, wishlist);
         }

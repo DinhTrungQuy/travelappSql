@@ -5,7 +5,7 @@ using System.Text;
 using TravelAppAPI.Infrastructure;
 using TravelAppAPI.Middleware;
 using TravelAppAPI.Models;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 using TravelApp.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,25 +17,23 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TravelAppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.Configure<TravelAppDatabaseSettings>(
     builder.Configuration.GetSection("TravelAppDatabase"));
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("Jwt"));
-builder.Services.AddSingleton<PlaceServices>();
-builder.Services.AddSingleton<AuthServices>();
-builder.Services.AddSingleton<WishlistServices>();
-builder.Services.AddSingleton<BookingServices>();
-builder.Services.AddSingleton<UserServices>();
-builder.Services.AddSingleton<FileServices>();
-builder.Services.AddSingleton<RatingServices>();
-builder.Services.AddSingleton<DashboardServices>();
-builder.Services.AddSingleton<CacheServices>();
+builder.Services.AddTransient<PlaceServices>();
+builder.Services.AddTransient<AuthServices>();
+builder.Services.AddTransient<WishlistServices>();
+builder.Services.AddTransient<BookingServices>();
+builder.Services.AddTransient<RatingServices>();
+builder.Services.AddTransient<FileServices>();
+builder.Services.AddTransient<UserServices>();
+builder.Services.AddTransient<DashboardServices>();
+builder.Services.AddTransient<CacheServices>();
+builder.Services.AddDbContext<TravelAppDbContext>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

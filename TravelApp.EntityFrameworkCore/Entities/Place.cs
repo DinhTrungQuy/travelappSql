@@ -8,7 +8,7 @@ namespace TravelAppAPI.Model
     public class Place
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string PlaceId { get; set; } = Guid.NewGuid().ToString();
         public int DurationDays { get; set; } = 0;
         [Required]
         public string Name { get; set; } = String.Empty;

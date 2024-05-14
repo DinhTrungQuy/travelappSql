@@ -1,6 +1,6 @@
 ﻿using TravelAppAPI.Infrastructure;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class FileServices
     {

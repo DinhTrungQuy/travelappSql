@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {

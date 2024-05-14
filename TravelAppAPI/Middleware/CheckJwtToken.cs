@@ -1,4 +1,4 @@
-﻿using TravelAppAPI.Sevices;
+﻿using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Middleware
 {

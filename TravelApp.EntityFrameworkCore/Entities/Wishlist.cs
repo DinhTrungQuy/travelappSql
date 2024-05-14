@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TravelAppAPI.Model;
 
 namespace TravelAppAPI.Models
 {
@@ -10,12 +11,13 @@ namespace TravelAppAPI.Models
     {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        [ForeignKey("Users")]
-        public string UserId { get; set; } = String.Empty;
-        [ForeignKey("Places")]
-        public string PlaceId { get; set; } = String.Empty;
+        [Required]
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
+        [Required]
+        [ForeignKey("PlaceId")]
+        public Place? Place { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
-
     }
 }

@@ -1,34 +1,70 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using TravelApp.EntityFrameworkCore;
 using TravelAppAPI.Model;
-using TravelAppAPI.Models;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class PlaceServices
     {
-        private readonly IMongoCollection<Place> _places;
-        public PlaceServices(IOptions<TravelAppDatabaseSettings> settings)
+        private readonly TravelAppDbContext _context;
+
+        public PlaceServices(TravelAppDbContext context)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase(settings.Value.DatabaseName);
-            _places = database.GetCollection<Place>(settings.Value.PlacesCollectionName);
+            _context = context;
         }
-        public async Task<List<Place>> GetAsync() => await _places.Find(place => true).ToListAsync();
-        public async Task<Place> GetAsync(string id) => await _places.Find<Place>(place => place.Id == id).FirstOrDefaultAsync();
+
+        public async Task<List<Place>> GetAsync()
+        {
+            return await _context.Places.ToListAsync();
+        }
+
+        public async Task<Place> GetAsync(string id)
+        {
+            return await _context.Places.FirstOrDefaultAsync(place => place.PlaceId == id);
+        }
+
         public async Task<Place> CreateAsync(Place place)
         {
-            await _places.InsertOneAsync(place);
+            _context.Places.Add(place);
+            await _context.SaveChangesAsync();
             return place;
         }
-        public async Task UpdateAsync(string id, Place placeIn) => await _places.ReplaceOneAsync(place => place.Id == id, placeIn);
+
+        public async Task UpdateAsync(string id, Place placeIn)
+        {
+            var place = await GetAsync(id);
+            if (place != null)
+            {
+                _context.Entry(place).CurrentValues.SetValues(placeIn);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateRating(string placeId, double ratingValue)
         {
             var place = await GetAsync(placeId);
-            place.Rating = ratingValue.ToString();
-            await UpdateAsync(placeId, place);
+            if (place != null)
+            {
+                place.Rating = ratingValue.ToString();
+                await _context.SaveChangesAsync();
+            }
         }
-        public async Task RemoveAsync(Place placeIn) => await _places.DeleteOneAsync(place => place.Id == placeIn.Id);
-        public async Task RemoveAsync(string id) => await _places.DeleteOneAsync(place => place.Id == id);
+
+        public async Task RemoveAsync(Place placeIn)
+        {
+            _context.Places.Remove(placeIn);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(string id)
+        {
+            var place = await GetAsync(id);
+            if (place != null)
+            {
+                _context.Places.Remove(place);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

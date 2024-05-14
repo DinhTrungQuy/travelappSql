@@ -1,44 +1,65 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TravelApp.EntityFrameworkCore;
 using TravelAppAPI.Models;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class BookingServices
     {
-        private readonly IMongoCollection<Booking> _bookings;
-        public BookingServices(IOptions<TravelAppDatabaseSettings> settings)
+        private readonly TravelAppDbContext _context;
+
+        public BookingServices(TravelAppDbContext context)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase(settings.Value.DatabaseName);
-            _bookings = database.GetCollection<Booking>(settings.Value.BookingsCollectionName);
+            _context = context;
         }
+
         public async Task<List<Booking>> GetAsync()
         {
-            return await _bookings.Find(booking => true).ToListAsync();
+            return await _context.Bookings.Include(b => b.User).Include(b => b.Place).ToListAsync();
         }
+
         public async Task<Booking> GetAsync(string id)
         {
-            return await _bookings.Find<Booking>(booking => booking.Id == id).FirstOrDefaultAsync();
+            return await _context.Bookings.Include(b => b.User).Include(b => b.Place)
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
+
         public async Task<Booking> CreateAsync(Booking booking)
         {
-            await _bookings.InsertOneAsync(booking);
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
             return booking;
         }
+
         public async Task UpdateAsync(string id, Booking bookingIn)
         {
-            await _bookings.ReplaceOneAsync(booking => booking.Id == id, bookingIn);
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking != null)
+            {
+                _context.Entry(booking).CurrentValues.SetValues(bookingIn);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-        }
-        public async Task RemoveAsync(String id)
+        public async Task RemoveAsync(string id)
         {
-            await _bookings.DeleteOneAsync(booking => booking.Id == id);
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking != null)
+            {
+                _context.Bookings.Remove(booking);
+                await _context.SaveChangesAsync();
+            }
         }
+
         public async Task RemoveByPlaceIdAsync(string placeId)
         {
-            await _bookings.DeleteManyAsync(booking => booking.PlaceId == placeId);
+            var bookings = _context.Bookings.Where(b => b.Place.PlaceId == placeId);
+            _context.Bookings.RemoveRange(bookings);
+            await _context.SaveChangesAsync();
         }
-
     }
 }

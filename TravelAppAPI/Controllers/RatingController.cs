@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {
@@ -37,14 +37,14 @@ namespace TravelAppAPI.Controllers
         [HttpPost("{bookingId:length(24)}")]
         public async Task<ActionResult<Rating>> PostRating(Rating rating, string bookingId)
         {
-            var ratingList = await _ratingServices.GetByPlaceIdAsync(rating.PlaceId);
+            var ratingList = await _ratingServices.GetByPlaceIdAsync(rating.Place.PlaceId);
             var booking = await _bookingServices.GetAsync(bookingId);
             booking.Status = 3;
             ratingList.Add(rating);
             var rateValue = Math.Round(ratingList.Average(r => r.RatingValue), 1);
             await _bookingServices.UpdateAsync(bookingId, booking);
             await _ratingServices.InsertAsync(rating);
-            await _placeServices.UpdateRating(rating.PlaceId, rateValue);
+            await _placeServices.UpdateRating(rating.Place.PlaceId, rateValue);
             return Ok(rating);
         }
 

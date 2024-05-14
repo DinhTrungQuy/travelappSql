@@ -8,7 +8,7 @@ using System.Text;
 using TravelAppAPI.Models;
 using TravelAppAPI.Models.Config;
 using TravelAppAPI.Models.Dto;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {

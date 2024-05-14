@@ -7,7 +7,7 @@ namespace TravelAppAPI.Models
     public class User
     {
         [Key]
-        public string Id { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
         [Required]
         public string Username { get; set; } = String.Empty;
         [Required]

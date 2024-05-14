@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TravelAppAPI.Model;
 
 namespace TravelAppAPI.Models
 {
@@ -10,11 +11,11 @@ namespace TravelAppAPI.Models
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
         [Required]
-        [ForeignKey("Users")]
-        public string UserId { get; set; } = String.Empty;
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
         [Required]
-        [ForeignKey("Places")]
-        public string PlaceId { get; set; } = String.Empty;
+        [ForeignKey("PlaceId")]
+        public Place? Place { get; set; }
         public int Quantity { get; set; } = 0;
         [Required]
         public int TotalPrice { get; set; } = 0;

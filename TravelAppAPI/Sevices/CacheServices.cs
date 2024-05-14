@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using TravelAppAPI.Models.Interface;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class CacheServices : ICacheService
     {

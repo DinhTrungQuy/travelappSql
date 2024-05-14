@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {
@@ -33,7 +33,7 @@ namespace TravelAppAPI.Controllers
         {
             var request = HttpContext.Request;
             string userId = _userServices.DecodeJwtToken(request);
-            booking.UserId = userId;
+            booking.User.UserId = userId;
             Booking createBooking = await _bookingServices.CreateAsync(booking);
             return Ok(createBooking);
         }
@@ -83,7 +83,7 @@ namespace TravelAppAPI.Controllers
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> Update(string id, Booking bookingIn)
         {
-            var booking = _bookingServices.GetAsync(id);
+            var booking = await _bookingServices.GetAsync(id);
             if (booking == null)
             {
                 return NotFound();

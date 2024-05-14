@@ -1,50 +1,84 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TravelApp.EntityFrameworkCore;
 using TravelAppAPI.Models;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class WishlistServices
     {
-        private readonly IMongoCollection<Wishlist> _wishlist;
-        public WishlistServices(IOptions<TravelAppDatabaseSettings> settings)
+        private readonly TravelAppDbContext _context;
+
+        public WishlistServices(TravelAppDbContext context)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase(settings.Value.DatabaseName);
-            _wishlist = database.GetCollection<Wishlist>(settings.Value.WishlistsCollectionName);
+            _context = context;
         }
+
         public async Task<List<Wishlist>> GetAsync()
         {
-            return await _wishlist.Find(wishlist => true).ToListAsync();
+            return await _context.Wishlists
+                .Include(w => w.User)
+                .Include(w => w.Place)
+                .ToListAsync();
         }
+
         public async Task<List<Wishlist>> GetAsync(string userId)
         {
-            return await _wishlist.Find<Wishlist>(wishlist => wishlist.UserId == userId).ToListAsync();
+            return await _context.Wishlists
+                .Include(w => w.User)
+                .Include(w => w.Place)
+                .Where(w => w.User.UserId == userId)
+                .ToListAsync();
         }
+
         public async Task<Wishlist> CheckExist(string userId, string placeId)
         {
-            return await _wishlist.Find<Wishlist>(wishlist => wishlist.UserId == userId && wishlist.PlaceId == placeId).FirstOrDefaultAsync();
+            return await _context.Wishlists
+                .FirstOrDefaultAsync(w => w.User.UserId == userId && w.Place.PlaceId == placeId);
         }
+
         public async Task<Wishlist> CreateAsync(Wishlist wishlist)
         {
-            await _wishlist.InsertOneAsync(wishlist);
+            _context.Wishlists.Add(wishlist);
+            await _context.SaveChangesAsync();
             return wishlist;
         }
+
         public async Task UpdateAsync(string id, Wishlist wishlistIn)
         {
-            await _wishlist.ReplaceOneAsync(wishlist => wishlist.Id == id, wishlistIn);
+            var wishlist = await _context.Wishlists.FindAsync(id);
+            if (wishlist != null)
+            {
+                _context.Entry(wishlist).CurrentValues.SetValues(wishlistIn);
+                await _context.SaveChangesAsync();
+            }
         }
+
         public async Task RemoveAsync(Wishlist wishlistIn)
         {
-            await _wishlist.DeleteOneAsync(wishlist => wishlist.Id == wishlistIn.Id);
+            _context.Wishlists.Remove(wishlistIn);
+            await _context.SaveChangesAsync();
         }
+
         public async Task RemoveAsync(string userId, string placeId)
         {
-            await _wishlist.DeleteOneAsync(wishlist => wishlist.UserId == userId && wishlist.PlaceId == placeId);
+            var wishlist = await _context.Wishlists
+                .FirstOrDefaultAsync(w => w.User.UserId == userId && w.Place.PlaceId == placeId);
+            if (wishlist != null)
+            {
+                _context.Wishlists.Remove(wishlist);
+                await _context.SaveChangesAsync();
+            }
         }
+
         public async Task RemoveByPlaceIdAsync(string placeId)
         {
-            await _wishlist.DeleteManyAsync(wishlist => wishlist.PlaceId == placeId);
+            var wishlists = _context.Wishlists.Where(w => w.Place.PlaceId == placeId);
+            _context.Wishlists.RemoveRange(wishlists);
+            await _context.SaveChangesAsync();
         }
     }
 }

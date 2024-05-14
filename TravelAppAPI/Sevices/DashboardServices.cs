@@ -3,7 +3,7 @@ using MongoDB.Driver;
 using TravelAppAPI.Model;
 using TravelAppAPI.Models;
 
-namespace TravelAppAPI.Sevices
+namespace TravelAppAPI.Services
 {
     public class DashboardServices
     {

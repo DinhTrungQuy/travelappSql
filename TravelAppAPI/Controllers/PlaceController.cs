@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Model;
 using TravelAppAPI.Models.Config;
 using TravelAppAPI.Models.Dto;
-using TravelAppAPI.Sevices;
+using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
 {
@@ -41,10 +41,10 @@ namespace TravelAppAPI.Controllers
             var mapper = MapperConfig.Initialize();
             var placeModel = mapper.Map<Place>(place);
             await _placeServices.CreateAsync(placeModel);
-            var filePath = await _fileServices.SavePlaceFile(place.Image!, placeModel.Id);
-            placeModel.ImageUrl = "https://quydt.speak.vn/images/places/" + placeModel.Id + Path.GetExtension(filePath);
+            var filePath = await _fileServices.SavePlaceFile(place.Image!, placeModel.PlaceId);
+            placeModel.ImageUrl = "https://quydt.speak.vn/images/places/" + placeModel.PlaceId + Path.GetExtension(filePath);
             placeModel.Rating = "0";
-            await _placeServices.UpdateAsync(placeModel.Id, placeModel);
+            await _placeServices.UpdateAsync(placeModel.PlaceId, placeModel);
             return Ok(placeModel);
         }
         [HttpPut("{id:length(24)}")]
@@ -57,9 +57,9 @@ namespace TravelAppAPI.Controllers
                 return NotFound();
             }
             var placeModel = mapper.Map<Place>(placeIn);
-            placeModel.Id = id;
+            placeModel.PlaceId = id;
             placeModel.Rating = place.Rating;
-            var filePath = await _fileServices.SavePlaceFile(placeIn.Image!, placeModel.Id);
+            var filePath = await _fileServices.SavePlaceFile(placeIn.Image!, placeModel.PlaceId);
             if (filePath == "Invalid file")
             {
                 return BadRequest("Invalid file");
@@ -67,7 +67,7 @@ namespace TravelAppAPI.Controllers
             }
             else
             {
-                placeModel.ImageUrl = "https://quydt.speak.vn/images/places/" + placeModel.Id + Path.GetExtension(filePath);
+                placeModel.ImageUrl = "https://quydt.speak.vn/images/places/" + placeModel.PlaceId + Path.GetExtension(filePath);
             }
 
             await _placeServices.UpdateAsync(id, placeModel);
