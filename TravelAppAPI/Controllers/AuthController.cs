@@ -151,7 +151,6 @@ namespace TravelAppAPI.Controllers
         public async Task<ActionResult<User>> Register(RegisterDto user)
         {
             var mapper = MapperConfig.Initialize();
-
             if (await _authServices.CheckExistUser(user.Username))
             {
                 return BadRequest("Username is already exist");

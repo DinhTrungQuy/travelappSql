@@ -20,7 +20,7 @@ namespace TravelAppAPI.Controllers
             string userId = _userServices.DecodeJwtToken(request);
             return Ok(await _wishlistServices.GetAsync(userId));
         }
-        [HttpGet("{placeId:length(24)}", Name = "GetWishlist")]
+        [HttpGet("{placeId:length(36)}", Name = "GetWishlist")]
         public async Task<ActionResult<Wishlist>> Get(string placeId)
         {
             var request = HttpContext.Request;
@@ -41,7 +41,7 @@ namespace TravelAppAPI.Controllers
             await _wishlistServices.CreateAsync(wishlist);
             return CreatedAtRoute("GetWishlist", new { id = wishlist.Id.ToString() }, wishlist);
         }
-        [HttpPut("{id:length(24)}")]
+        [HttpPut("{id:length(36)}")]
         public async Task<IActionResult> Update(string id, Wishlist wishlistIn)
         {
             var wishlist = _wishlistServices.GetAsync(id);
@@ -52,7 +52,7 @@ namespace TravelAppAPI.Controllers
             await _wishlistServices.UpdateAsync(id, wishlistIn);
             return NoContent();
         }
-        [HttpDelete("{placeId:length(24)}")]
+        [HttpDelete("{placeId:length(36)}")]
         public async Task<IActionResult> Delete(string placeId)
         {
             var request = HttpContext.Request;
