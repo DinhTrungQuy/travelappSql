@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TravelApp.EntityFrameworkCore;
 using TravelAppAPI.Models;
 
@@ -21,11 +17,14 @@ namespace TravelAppAPI.Services
         {
             return await _context.Bookings.Include(b => b.User).Include(b => b.Place).ToListAsync();
         }
+        public async Task<List<Booking>> GetByUserIdAsync(string userId)
+        {
+            return await _context.Bookings.Include(b => b.User).Include(b => b.Place).Where(b => b.User.UserId == userId).ToListAsync();
+        }
 
         public async Task<Booking> GetAsync(string id)
         {
-            return await _context.Bookings.Include(b => b.User).Include(b => b.Place)
-                .FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Bookings.Include(b => b.User).Include(b => b.Place).Where(b => b.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Booking> CreateAsync(Booking booking)

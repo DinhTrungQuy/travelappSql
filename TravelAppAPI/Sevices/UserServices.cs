@@ -28,6 +28,10 @@ namespace TravelAppAPI.Services
             }
             return user;
         }
+        public async Task<User> GetUserAndPassword(string userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
 
         public async Task<string> GetUserPassword(string username)
         {

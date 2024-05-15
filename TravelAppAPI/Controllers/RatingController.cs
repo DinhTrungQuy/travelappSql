@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
+using TravelAppAPI.Models.Config;
+using TravelAppAPI.Models.Dto;
 using TravelAppAPI.Services;
 
 namespace TravelAppAPI.Controllers
@@ -19,10 +21,9 @@ namespace TravelAppAPI.Controllers
         public async Task<ActionResult<string>> GetRating()
         {
             var ratingList = await _ratingServices.GetAsync();
-
             return Ok(ratingList);
         }
-        [HttpGet("{placeId:length(24)}")]
+        [HttpGet("{placeId:length(36)}")]
         public async Task<ActionResult<string>> GetRating(string placeId)
         {
             var ratingList = await _ratingServices.GetByPlaceIdAsync(placeId);
@@ -34,11 +35,15 @@ namespace TravelAppAPI.Controllers
 
             return Ok(rateValue.ToString());
         }
-        [HttpPost("{bookingId:length(24)}")]
-        public async Task<ActionResult<Rating>> PostRating(Rating rating, string bookingId)
+        [HttpPost("{bookingId:length(36)}")]
+        public async Task<ActionResult<Rating>> PostRating(RatingInputDto ratingIn, string bookingId)
         {
-            var ratingList = await _ratingServices.GetByPlaceIdAsync(rating.Place.PlaceId);
+            var mapper = MapperConfig.Initialize();
+            var ratingList = await _ratingServices.GetByPlaceIdAsync(ratingIn.PlaceId);
             var booking = await _bookingServices.GetAsync(bookingId);
+            var rating = mapper.Map<Rating>(ratingIn);
+            rating.User = booking.User;
+            rating.Place = booking.Place;
             booking.Status = 3;
             ratingList.Add(rating);
             var rateValue = Math.Round(ratingList.Average(r => r.RatingValue), 1);

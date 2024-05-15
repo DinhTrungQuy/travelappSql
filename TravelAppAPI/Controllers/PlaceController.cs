@@ -24,7 +24,7 @@ namespace TravelAppAPI.Controllers
 
             return Ok(await _placeServices.GetAsync());
         }
-        [HttpGet("{id:length(24)}", Name = "GetPlace")]
+        [HttpGet("{id:length(36)}", Name = "GetPlace")]
         [AllowAnonymous]
         public async Task<ActionResult<Place>> Get(string id)
         {
@@ -47,7 +47,7 @@ namespace TravelAppAPI.Controllers
             await _placeServices.UpdateAsync(placeModel.PlaceId, placeModel);
             return Ok(placeModel);
         }
-        [HttpPut("{id:length(24)}")]
+        [HttpPut("{id:length(36)}")]
         public async Task<IActionResult> Update(string id, [FromForm] PlaceDto placeIn)
         {
             var mapper = MapperConfig.Initialize();
@@ -73,7 +73,7 @@ namespace TravelAppAPI.Controllers
             await _placeServices.UpdateAsync(id, placeModel);
             return NoContent();
         }
-        [HttpDelete("{id:length(24)}")]
+        [HttpDelete("{id:length(36)}")]
         public async Task<IActionResult> Delete(string id)
         {
 

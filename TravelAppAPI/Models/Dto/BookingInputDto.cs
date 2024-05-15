@@ -1,23 +1,13 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using TravelAppAPI.Model;
 
-namespace TravelAppAPI.Models
+namespace TravelAppAPI.Models.Dto
 {
-    [Table("Bookings")]
-    public class Booking
+    public class BookingInputDto
     {
-        [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-        [Required]
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        [Required]
-        [ForeignKey("PlaceId")]
-        public Place Place { get; set; }
+        public string PlaceId { get; set; } = String.Empty;
         public int Quantity { get; set; } = 0;
-        [Required]
         public int TotalPrice { get; set; } = 0;
         public int Status { get; set; } = 0;
         public DateTime CheckInTime { get; set; } = DateTime.Now;
@@ -27,3 +17,4 @@ namespace TravelAppAPI.Models
         public int Rating { get; set; } = 0;
     }
 }
+

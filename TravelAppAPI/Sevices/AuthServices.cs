@@ -23,7 +23,12 @@ namespace TravelAppAPI.Services
             var hashedPassword = CreateMD5(password);
             var user = await _context.Users
                 .Where(u => u.Username == userName && u.Password == hashedPassword)
-                .Select(u => new LoginInfo { UserId = u.UserId, Username = u.Username, Role = u.Role })
+                .Select(u => new LoginInfo
+                {
+                    UserId = u.UserId,
+                    Username = u.Username,
+                    Role = u.Role
+                })
                 .FirstOrDefaultAsync();
 
             return user ?? new LoginInfo();

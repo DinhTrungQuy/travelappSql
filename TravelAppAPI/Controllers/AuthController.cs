@@ -29,7 +29,7 @@ namespace TravelAppAPI.Controllers
 
 
 
-        [HttpGet("{id:length(24)}", Name = "GetUser")]
+        [HttpGet("{id:length(36)}", Name = "GetUser")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<User>> Get(string id)
         {

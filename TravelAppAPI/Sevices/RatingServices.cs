@@ -35,7 +35,7 @@ namespace TravelAppAPI.Services
 
         public async Task<Rating> InsertAsync(Rating rating)
         {
-            _context.Ratings.Add(rating);
+            await _context.Ratings.AddAsync(rating);
             await _context.SaveChangesAsync();
             return rating;
         }

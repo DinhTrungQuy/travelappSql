@@ -37,7 +37,8 @@ namespace TravelAppAPI.Services
         public async Task<Wishlist> CheckExist(string userId, string placeId)
         {
             return await _context.Wishlists
-                .FirstOrDefaultAsync(w => w.User.UserId == userId && w.Place.PlaceId == placeId);
+                .Where(w => w.User.UserId == userId && w.Place.PlaceId == placeId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Wishlist> CreateAsync(Wishlist wishlist)
@@ -45,16 +46,6 @@ namespace TravelAppAPI.Services
             _context.Wishlists.Add(wishlist);
             await _context.SaveChangesAsync();
             return wishlist;
-        }
-
-        public async Task UpdateAsync(string id, Wishlist wishlistIn)
-        {
-            var wishlist = await _context.Wishlists.FindAsync(id);
-            if (wishlist != null)
-            {
-                _context.Entry(wishlist).CurrentValues.SetValues(wishlistIn);
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task RemoveAsync(Wishlist wishlistIn)

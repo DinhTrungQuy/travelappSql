@@ -23,15 +23,15 @@ namespace TravelAppAPI.Controllers
             return Ok(await _userServices.GetAsync(userId));
 
         }
-        [HttpGet("{userId:length(24)}")]
+        [HttpGet("{userId:length(36)}")]
         public async Task<ActionResult<User>> Get(string userId)
         {
             return Ok(await _userServices.GetAsync(userId));
 
         }
-        [HttpPut("{id:length(24)}")]
+        [HttpPut("{id:length(36)}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(string id, UserDto userIn)
+        public async Task<IActionResult> Update([FromQuery]string id, UserDto userIn)
         {
             var map = MapperConfig.Initialize();
             User user = await _authServices.GetAsync(id);
@@ -57,7 +57,7 @@ namespace TravelAppAPI.Controllers
             await _userServices.UpdateAsync(id, userModel);
             return NoContent();
         }
-        [HttpDelete("{id:length(24)}")]
+        [HttpDelete("{id:length(36)}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {

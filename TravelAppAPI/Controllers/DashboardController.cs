@@ -1,14 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAppAPI.Models;
 using TravelAppAPI.Services;
+using System.Threading.Tasks;
 
 namespace TravelAppAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DashboardController(DashboardServices dashboardServices) : ControllerBase
+    public class DashboardController : ControllerBase
     {
-        private readonly DashboardServices _dashboardServices = dashboardServices;
+        private readonly DashboardServices _dashboardServices;
+
+        public DashboardController(DashboardServices dashboardServices)
+        {
+            _dashboardServices = dashboardServices;
+        }
 
         [HttpGet]
         public async Task<ActionResult<Dashboard>> Get()
@@ -18,8 +24,15 @@ namespace TravelAppAPI.Controllers
             var user = await _dashboardServices.GetTotalUsers();
             var booking = await _dashboardServices.GetTotalBookings();
             var dashboardId = await _dashboardServices.GetDashboard();
-            return await _dashboardServices.UpdateDashboard(new Dashboard { Id = dashboardId, Profit = profit, TotalPlaces = place, TotalUsers = user, TotalBookings = booking });
+            var updatedDashboard = await _dashboardServices.UpdateDashboard(new Dashboard
+            {
+                Id = dashboardId,
+                Profit = profit,
+                TotalPlaces = place,
+                TotalUsers = user,
+                TotalBookings = booking
+            });
+            return Ok(updatedDashboard);
         }
-
     }
 }

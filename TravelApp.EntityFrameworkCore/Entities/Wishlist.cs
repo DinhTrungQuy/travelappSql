@@ -13,10 +13,10 @@ namespace TravelAppAPI.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
         [Required]
         [ForeignKey("UserId")]
-        public User? User { get; set; }
+        public User User { get; set; }
         [Required]
         [ForeignKey("PlaceId")]
-        public Place? Place { get; set; }
+        public Place Place { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
